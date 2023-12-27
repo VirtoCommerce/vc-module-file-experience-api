@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "VirtoCommerce.FileExperienceApiModule.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:52645;http://localhost:52646"
+    }
+  }
+}

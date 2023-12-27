@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+  <id>VirtoCommerce.FileExperienceApi</id>
+  <version>3.400.0</version>
+  <version-tag />
+
+  <platformVersion>3.400.0</platformVersion>
+  <dependencies>
+    <dependency id="VirtoCommerce.Content" version="3.414.0" />
+  </dependencies>
+
+  <title>Commerce File Experience API</title>
+  <description>An intermediated layer between clients and enterprise services powered by GraphQL protocol</description>
+  <authors>
+    <author>Virto Commerce</author>
+  </authors>
+  <owners>
+    <owner>Virto Commerce</owner>
+  </owners>
+  <projectUrl>https://virtocommerce.com</projectUrl>
+  <iconUrl>Modules/$(VirtoCommerce.FileExperienceApi)/Content/logoVC.png</iconUrl>
+  <requireLicenseAcceptance>false</requireLicenseAcceptance>
+  <releaseNotes />
+  <copyright>Copyright © 2011–2024 Virto Commerce. All rights reserved</copyright>
+  <tags>security core</tags>
+  <assemblyFile>VirtoCommerce.FileExperienceApiModule.Web.dll</assemblyFile>
+  <moduleType>VirtoCommerce.FileExperienceApiModule.Web.Module, VirtoCommerce.FileExperienceApiModule.Web</moduleType>
+  <incompatibilities />
+  <groups>
+    <group>commerce</group>
+  </groups>
+  <useFullTypeNameInSwagger>false</useFullTypeNameInSwagger>
+</module>
