@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.FileExperienc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VirtoCommerce.FileExperienceApiModule.Web", "src\VirtoCommerce.FileExperienceApiModule.Web\VirtoCommerce.FileExperienceApiModule.Web.csproj", "{447380B0-EC42-4910-92EB-93B86F490270}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtoCommerce.FileExperienceApiModule.Data", "src\VirtoCommerce.FileExperienceApiModule.Data\VirtoCommerce.FileExperienceApiModule.Data.csproj", "{8AFC88D1-5ADA-4F77-ABCF-6C6CD33F038B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{447380B0-EC42-4910-92EB-93B86F490270}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{447380B0-EC42-4910-92EB-93B86F490270}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{447380B0-EC42-4910-92EB-93B86F490270}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AFC88D1-5ADA-4F77-ABCF-6C6CD33F038B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AFC88D1-5ADA-4F77-ABCF-6C6CD33F038B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AFC88D1-5ADA-4F77-ABCF-6C6CD33F038B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AFC88D1-5ADA-4F77-ABCF-6C6CD33F038B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,6 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DDDAF0F7-4000-4BB6-80FB-EEC3B253BEDD} = {FAE6CCF7-298C-4AF3-8044-60DAA0C099F0}
 		{447380B0-EC42-4910-92EB-93B86F490270} = {FAE6CCF7-298C-4AF3-8044-60DAA0C099F0}
+		{8AFC88D1-5ADA-4F77-ABCF-6C6CD33F038B} = {FAE6CCF7-298C-4AF3-8044-60DAA0C099F0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E56E5C53-D55A-451B-96FA-654D86F96658}
