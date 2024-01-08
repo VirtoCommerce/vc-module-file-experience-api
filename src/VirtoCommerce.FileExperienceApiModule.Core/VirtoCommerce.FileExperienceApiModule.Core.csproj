@@ -13,6 +13,8 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="GraphQL.SystemTextJson" Version="4.0.2" />
+    <PackageReference Include="GraphQL.Upload.AspNetCore" Version="2.0.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
@@ -31,10 +33,5 @@
     <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.400.0" />
     <PackageReference Include="VirtoCommerce.TaxModule.Core" Version="3.400.0" />
     <PackageReference Include="VirtoCommerce.Tools" Version="3.400.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Commands\" />
-    <Folder Include="Extensions\" />
-    <Folder Include="Schemas\" />
   </ItemGroup>
 </Project>
