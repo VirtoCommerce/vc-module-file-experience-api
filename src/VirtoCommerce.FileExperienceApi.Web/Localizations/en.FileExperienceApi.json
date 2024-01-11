@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "FileExperienceApi:access": "Open FileExperienceApi menu",
+    "FileExperienceApi:create": "Create FileExperienceApi related data",
+    "FileExperienceApi:read": "View FileExperienceApi related data",
+    "FileExperienceApi:update": "Update FileExperienceApi related data",
+    "FileExperienceApi:delete": "Delete FileExperienceApi related data"
+  }
+}
