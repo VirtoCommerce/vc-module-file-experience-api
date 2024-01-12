@@ -53,8 +53,9 @@ public class FileUploadService : IFileUploadService
         blobInfo.Name = Path.GetFileName(request.FileName);
         blobInfo.ContentType = MimeTypeResolver.ResolveContentType(blobInfo.Name);
 
-        // Internal URL: rootPath/scope/userId/newGuid
-        blobInfo.RelativeUrl = BuildFileUrl(_options.RootPath, options.Scope, request.UserId, NewGuid());
+        // Internal URL: rootPath/scope/userId/newGuid.ext
+        var internalFileName = Path.ChangeExtension(NewGuid(), fileExtension);
+        blobInfo.RelativeUrl = BuildFileUrl(_options.RootPath, options.Scope, request.UserId, internalFileName);
 
         await using (var targetStream = await _blobProvider.OpenWriteAsync(blobInfo.RelativeUrl))
         {
