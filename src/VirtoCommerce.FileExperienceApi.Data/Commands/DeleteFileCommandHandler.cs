@@ -16,7 +16,7 @@ public class DeleteFileCommandHandler : IRequestHandler<DeleteFileCommand, bool>
 
     public async Task<bool> Handle(DeleteFileCommand request, CancellationToken cancellationToken)
     {
-        await _fileUploadService.DeleteFileAsync(request.Id);
+        await _fileUploadService.DeleteFilesAsync(new[] { request.Id });
 
         return true;
     }

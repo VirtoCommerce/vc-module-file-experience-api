@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -80,15 +81,12 @@ public class FileUploadService : IFileUploadService
         return FileUploadResult.Success(file);
     }
 
-    public virtual async Task DeleteFileAsync(string id)
+    public async Task<IList<File>> GetFilesAsync(IList<string> ids)
     {
-        var asset = await _assetEntryService.GetNoCloneAsync(id);
+        var assets = await _assetEntryService.GetNoCloneAsync(ids);
 
-        if (asset != null)
-        {
-            await _assetEntryService.DeleteAsync(new[] { id });
-            await _blobProvider.RemoveAsync(new[] { asset.BlobInfo.RelativeUrl });
-        }
+        var files = assets.Select(ConvertToFile).ToList();
+        return files;
     }
 
     public virtual async Task<File> OpenReadAsync(string id)
@@ -104,6 +102,20 @@ public class FileUploadService : IFileUploadService
         file.Stream = await _blobProvider.OpenReadAsync(asset.BlobInfo.RelativeUrl);
 
         return file;
+    }
+
+    public virtual async Task DeleteFilesAsync(IList<string> ids)
+    {
+        var assets = await _assetEntryService.GetNoCloneAsync(ids);
+
+        if (assets.Any())
+        {
+            var existingIds = assets.Select(x => x.Id).ToArray();
+            await _assetEntryService.DeleteAsync(existingIds);
+
+            var existingUrls = assets.Select(x => x.BlobInfo.RelativeUrl).ToArray();
+            await _blobProvider.RemoveAsync(existingUrls);
+        }
     }
 
 

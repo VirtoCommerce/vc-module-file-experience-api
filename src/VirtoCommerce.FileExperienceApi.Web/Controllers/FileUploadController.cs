@@ -91,7 +91,7 @@ public class FileUploadController : Controller
     [HttpDelete("{id}")]
     public async Task<ActionResult> DeleteFile([FromRoute] string id)
     {
-        await _fileUploadService.DeleteFileAsync(id);
+        await _fileUploadService.DeleteFilesAsync(new[] { id });
         return Ok();
     }
 

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 
@@ -7,7 +8,8 @@ namespace VirtoCommerce.FileExperienceApi.Core.Services
     {
         FileUploadScopeOptions GetOptions(string scope);
         Task<FileUploadResult> UploadFileAsync(FileUploadRequest request);
-        Task DeleteFileAsync(string id);
+        Task<IList<File>> GetFilesAsync(IList<string> ids);
         Task<File> OpenReadAsync(string id);
+        Task DeleteFilesAsync(IList<string> ids);
     }
 }
