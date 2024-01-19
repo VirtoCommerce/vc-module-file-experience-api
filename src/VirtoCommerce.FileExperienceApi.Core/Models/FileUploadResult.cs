@@ -4,8 +4,11 @@ namespace VirtoCommerce.FileExperienceApi.Core.Models;
 
 public class FileUploadResult
 {
-    public bool Succeeded => string.IsNullOrEmpty(Error) && File != null;
-    public string Error { get; set; }
+    public bool Succeeded => string.IsNullOrEmpty(ErrorMessage) && File != null;
+    public string ErrorCode { get; set; }
+    public string ErrorMessage { get; set; }
+    public object ErrorParameter { get; set; }
+
     public File File { get; set; }
 
     public static FileUploadResult Success(File file)
@@ -15,10 +18,14 @@ public class FileUploadResult
         return result;
     }
 
-    public static FileUploadResult Fail(string message)
+    public static FileUploadResult Fail(string code, string message, object parameter = null)
     {
         var result = AbstractTypeFactory<FileUploadResult>.TryCreateInstance();
-        result.Error = message;
+
+        result.ErrorCode = code;
+        result.ErrorMessage = message;
+        result.ErrorParameter = parameter;
+
         return result;
     }
 }

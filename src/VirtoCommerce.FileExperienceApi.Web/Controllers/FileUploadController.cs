@@ -46,7 +46,7 @@ public class FileUploadController : Controller
         // https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
         if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
         {
-            return FileUploadResult.Fail($"Expected a multipart request, but got '{Request.ContentType}'");
+            return FileUploadError.InvalidContentType(Request.ContentType);
         }
 
         FileUploadResult result;
@@ -71,12 +71,12 @@ public class FileUploadController : Controller
             }
             else
             {
-                result = FileUploadResult.Fail("Cannot read file");
+                result = FileUploadError.InvalidContent();
             }
         }
         catch (Exception ex)
         {
-            result = FileUploadResult.Fail(ex.Message);
+            result = FileUploadError.Exception(ex);
         }
 
         if (result.File != null)

@@ -40,14 +40,13 @@ public class FileUploadService : IFileUploadService
         var options = GetOptions(request.Scope);
         if (options is null)
         {
-            return FileUploadResult.Fail($"Unknown scope '{request.Scope}'");
+            return FileUploadError.InvalidScope(request.Scope);
         }
 
         var fileExtension = Path.GetExtension(request.FileName);
         if (!options.AllowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
         {
-            var allowedExtensions = string.Join(", ", options.AllowedExtensions);
-            return FileUploadResult.Fail($"Allowed file extensions: {allowedExtensions}");
+            return FileUploadError.InvalidExtension(options.AllowedExtensions);
         }
 
         var blobInfo = AbstractTypeFactory<BlobInfo>.TryCreateInstance();
@@ -67,7 +66,7 @@ public class FileUploadService : IFileUploadService
         if (blobInfo.Size > options.MaxFileSize)
         {
             await _blobProvider.RemoveAsync(new[] { blobInfo.RelativeUrl });
-            return FileUploadResult.Fail($"Maximum allowed file size: {options.MaxFileSize}");
+            return FileUploadError.InvalidSize(options.MaxFileSize);
         }
 
         var asset = AbstractTypeFactory<AssetEntry>.TryCreateInstance();
