@@ -80,7 +80,16 @@ public class FileUploadService : IFileUploadService
         return FileUploadResult.Success(file);
     }
 
-    public async Task<IList<File>> GetFilesAsync(IList<string> ids)
+    public virtual async Task<Stream> OpenReadAsync(string id)
+    {
+        var asset = await _assetEntryService.GetNoCloneAsync(id);
+
+        return asset is null
+            ? null
+            : await _blobProvider.OpenReadAsync(asset.BlobInfo.RelativeUrl);
+    }
+
+    public async Task<IList<File>> GetAsync(IList<string> ids, string responseGroup = null, bool clone = true)
     {
         var assets = await _assetEntryService.GetNoCloneAsync(ids);
 
@@ -88,22 +97,7 @@ public class FileUploadService : IFileUploadService
         return files;
     }
 
-    public virtual async Task<File> OpenReadAsync(string id)
-    {
-        var asset = await _assetEntryService.GetNoCloneAsync(id);
-
-        if (asset is null)
-        {
-            return null;
-        }
-
-        var file = ConvertToFile(asset);
-        file.Stream = await _blobProvider.OpenReadAsync(asset.BlobInfo.RelativeUrl);
-
-        return file;
-    }
-
-    public virtual async Task DeleteFilesAsync(IList<string> ids)
+    public virtual async Task DeleteAsync(IList<string> ids, bool softDelete = false)
     {
         var assets = await _assetEntryService.GetNoCloneAsync(ids);
 
@@ -115,6 +109,12 @@ public class FileUploadService : IFileUploadService
             var existingUrls = assets.Select(x => x.BlobInfo.RelativeUrl).ToArray();
             await _blobProvider.RemoveAsync(existingUrls);
         }
+    }
+
+    public virtual Task SaveChangesAsync(IList<File> models)
+    {
+        var assets = models.Select(ConvertToAsset).ToList();
+        return _assetEntryService.SaveChangesAsync(assets);
     }
 
 
@@ -136,12 +136,43 @@ public class FileUploadService : IFileUploadService
     {
         var result = AbstractTypeFactory<File>.TryCreateInstance();
 
-        result.Scope = asset.Group;
         result.Id = asset.Id;
-        result.Name = asset.BlobInfo.Name;
-        result.ContentType = asset.BlobInfo.ContentType;
-        result.Size = asset.BlobInfo.Size;
-        result.Url = asset.BlobInfo.RelativeUrl;
+        result.Scope = asset.Group;
+
+        if (asset.BlobInfo != null)
+        {
+            result.Name = asset.BlobInfo.Name;
+            result.ContentType = asset.BlobInfo.ContentType;
+            result.Size = asset.BlobInfo.Size;
+            result.Url = asset.BlobInfo.RelativeUrl;
+        }
+
+        if (asset.Tenant != null)
+        {
+            result.OwnerId = asset.Tenant.Id;
+            result.OwnerType = asset.Tenant.Type;
+        }
+
+        return result;
+    }
+
+    protected virtual AssetEntry ConvertToAsset(File file)
+    {
+        var result = AbstractTypeFactory<AssetEntry>.TryCreateInstance();
+
+        result.Id = file.Id;
+        result.Group = file.Scope;
+
+        result.BlobInfo = AbstractTypeFactory<BlobInfo>.TryCreateInstance();
+        result.BlobInfo.Name = file.Name;
+        result.BlobInfo.ContentType = file.ContentType;
+        result.BlobInfo.Size = file.Size;
+        result.BlobInfo.RelativeUrl = file.Url;
+
+        if (!string.IsNullOrEmpty(file.OwnerId) || !string.IsNullOrEmpty(file.OwnerType))
+        {
+            result.Tenant = new TenantIdentity(file.OwnerId, file.OwnerType);
+        }
 
         return result;
     }

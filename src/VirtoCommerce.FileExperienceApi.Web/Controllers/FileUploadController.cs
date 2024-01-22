@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +15,7 @@ using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.FileExperienceApi.Web.Filters;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Helpers;
+using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Security.Permissions;
 
 namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
 
@@ -21,11 +24,18 @@ namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
 public class FileUploadController : Controller
 {
     private readonly IFileUploadService _fileUploadService;
+    private readonly IAuthorizationService _authorizationService;
+    private readonly IEnumerable<IFileAuthorizationRequirementFactory> _requirementFactories;
     private static readonly FormOptions _defaultFormOptions = new();
 
-    public FileUploadController(IFileUploadService fileUploadService)
+    public FileUploadController(
+        IFileUploadService fileUploadService,
+        IAuthorizationService authorizationService,
+        IEnumerable<IFileAuthorizationRequirementFactory> requirementFactories)
     {
         _fileUploadService = fileUploadService;
+        _authorizationService = authorizationService;
+        _requirementFactories = requirementFactories;
     }
 
     [HttpGet("{scope}/options")]
@@ -103,26 +113,58 @@ public class FileUploadController : Controller
         return results;
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteFile([FromRoute] string id)
-    {
-        await _fileUploadService.DeleteFilesAsync(new[] { id });
-        return Ok();
-    }
-
     [HttpGet("{id}")]
-    public async Task<ActionResult> GetFile([FromRoute] string id)
+    public async Task<ActionResult> DownloadFile([FromRoute] string id)
     {
-        var file = await _fileUploadService.OpenReadAsync(id);
-
-        if (file?.Stream is null)
+        var file = await _fileUploadService.GetNoCloneAsync(id);
+        if (file is null)
         {
             return NotFound();
         }
 
-        return File(file.Stream, file.ContentType, file.Name);
+        if (!await Authorize(file, FilePermissions.Read))
+        {
+            return Forbid();
+        }
+
+        var stream = await _fileUploadService.OpenReadAsync(id);
+        return File(stream, file.ContentType, file.Name);
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteFile([FromRoute] string id)
+    {
+        var file = await _fileUploadService.GetNoCloneAsync(id);
+        if (file is null)
+        {
+            return Ok();
+        }
+
+        if (!await Authorize(file, FilePermissions.Delete))
+        {
+            return Forbid();
+        }
+
+        await _fileUploadService.DeleteAsync(new[] { id });
+
+        return Ok();
+    }
+
+
+    private async Task<bool> Authorize(File file, string permission)
+    {
+        var factory = _requirementFactories.FirstOrDefault(x => x.Scope.EqualsInvariant(file.Scope));
+        var requirement = factory?.Create(file, permission);
+
+        if (requirement is null)
+        {
+            // Authorize request only if the file is not attached to any object (owner)
+            return string.IsNullOrEmpty(file.OwnerId);
+        }
+
+        var authorizationResult = await _authorizationService.AuthorizeAsync(User, file, requirement);
+        return authorizationResult.Succeeded;
+    }
 
     private bool TryGetOptions(string scope, out FileUploadScopeOptions options)
     {

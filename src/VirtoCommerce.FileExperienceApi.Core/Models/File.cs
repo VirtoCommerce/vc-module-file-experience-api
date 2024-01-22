@@ -1,17 +1,14 @@
-using System.IO;
-using Newtonsoft.Json;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.FileExperienceApi.Core.Models;
 
-public class File
+public class File : Entity
 {
     public string Scope { get; set; }
-    public string Id { get; set; }
     public string Name { get; set; }
     public string ContentType { get; set; }
     public long Size { get; set; }
     public string Url { get; set; }
-
-    [JsonIgnore]
-    public Stream Stream { get; set; }
+    public string OwnerId { get; set; }
+    public string OwnerType { get; set; }
 }
