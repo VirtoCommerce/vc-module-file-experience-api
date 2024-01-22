@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -15,6 +16,7 @@ using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.FileExperienceApi.Web.Filters;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Helpers;
+using File = VirtoCommerce.FileExperienceApi.Core.Models.File;
 using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Security.Permissions;
 
 namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
@@ -65,37 +67,15 @@ public class FileUploadController : Controller
         {
             var boundary = MultipartRequestHelper.GetBoundary(MediaTypeHeaderValue.Parse(Request.ContentType), _defaultFormOptions.MultipartBoundaryLengthLimit);
             var reader = new MultipartReader(boundary, Request.Body);
-
             var section = await reader.ReadNextSectionAsync();
+
             while (section != null)
             {
                 if (ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition) &&
                     MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
                 {
-                    var fileName = contentDisposition.FileName.Value;
-
-                    try
-                    {
-                        var request = AbstractTypeFactory<FileUploadRequest>.TryCreateInstance();
-                        request.Scope = scope;
-                        request.UserId = GetUserId();
-                        request.FileName = fileName;
-                        request.Stream = section.Body;
-
-                        var result = await _fileUploadService.UploadFileAsync(request);
-
-                        if (result.Url != null)
-                        {
-                            // Hide real URL
-                            result.Url = Url.Action(nameof(DownloadFile), new { result.Id });
-                        }
-
-                        results.Add(result);
-                    }
-                    catch (Exception ex)
-                    {
-                        results.Add(FileUploadError.Exception(ex, fileName));
-                    }
+                    var result = await SaveFile(contentDisposition.FileName.Value, section.Body);
+                    results.Add(result);
                 }
                 else
                 {
@@ -111,6 +91,32 @@ public class FileUploadController : Controller
         }
 
         return results;
+
+        async Task<FileUploadResult> SaveFile(string fileName, Stream stream)
+        {
+            try
+            {
+                var request = AbstractTypeFactory<FileUploadRequest>.TryCreateInstance();
+                request.Scope = scope;
+                request.UserId = GetUserId();
+                request.FileName = fileName;
+                request.Stream = stream;
+
+                var result = await _fileUploadService.UploadFileAsync(request);
+
+                if (result.Url != null)
+                {
+                    // Hide real URL
+                    result.Url = Url.Action(nameof(DownloadFile), new { result.Id });
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return FileUploadError.Exception(ex, fileName);
+            }
+        }
     }
 
     [HttpGet("{id}")]
