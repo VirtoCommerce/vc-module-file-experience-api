@@ -15,24 +15,24 @@ public static class FileUploadError
         return FileUploadResult.Fail("INVALID_CONTENT", "Cannot read file");
     }
 
-    public static FileUploadResult InvalidScope(string scope)
+    public static FileUploadResult Exception(Exception ex, string fileName = null)
     {
-        return FileUploadResult.Fail("INVALID_SCOPE", $"Unknown scope '{scope}'", scope);
+        return FileUploadResult.Fail("EXCEPTION", ex.Message, parameter: null, fileName);
     }
 
-    public static FileUploadResult InvalidExtension(IList<string> allowedExtensions)
+    public static FileUploadResult InvalidScope(string scope, string fileName)
+    {
+        return FileUploadResult.Fail("INVALID_SCOPE", $"Unknown scope '{scope}'", scope, fileName);
+    }
+
+    public static FileUploadResult InvalidExtension(IList<string> allowedExtensions, string fileName)
     {
         var joinedExtensions = string.Join(", ", allowedExtensions);
-        return FileUploadResult.Fail("INVALID_EXTENSION", $"Allowed file extensions: {joinedExtensions}", allowedExtensions);
+        return FileUploadResult.Fail("INVALID_EXTENSION", $"Allowed file extensions: {joinedExtensions}", allowedExtensions, fileName);
     }
 
-    public static FileUploadResult InvalidSize(long maxSize)
+    public static FileUploadResult InvalidSize(long maxSize, string fileName)
     {
-        return FileUploadResult.Fail("INVALID_SIZE", $"Maximum allowed file size: {maxSize}", maxSize);
-    }
-
-    public static FileUploadResult Exception(Exception ex)
-    {
-        return FileUploadResult.Fail("EXCEPTION", ex.Message);
+        return FileUploadResult.Fail("INVALID_SIZE", $"Maximum allowed file size: {maxSize}", maxSize, fileName);
     }
 }

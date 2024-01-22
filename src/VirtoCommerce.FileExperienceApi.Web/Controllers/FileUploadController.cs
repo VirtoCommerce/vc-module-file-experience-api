@@ -41,51 +41,66 @@ public class FileUploadController : Controller
     [HttpPost("{scope}")]
     [UploadFile]
     [DisableFormValueModelBinding]
-    public async Task<ActionResult<FileUploadResult>> Upload([FromRoute] string scope)
+    public async Task<ActionResult<IList<FileUploadResult>>> UploadFiles([FromRoute] string scope)
     {
         // https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
         if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
         {
-            return FileUploadError.InvalidContentType(Request.ContentType);
+            return new[] { FileUploadError.InvalidContentType(Request.ContentType) };
         }
 
-        FileUploadResult result;
+        var results = new List<FileUploadResult>();
 
         try
         {
             var boundary = MultipartRequestHelper.GetBoundary(MediaTypeHeaderValue.Parse(Request.ContentType), _defaultFormOptions.MultipartBoundaryLengthLimit);
             var reader = new MultipartReader(boundary, Request.Body);
+
             var section = await reader.ReadNextSectionAsync();
-
-            if (section != null &&
-                ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition) &&
-                MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
+            while (section != null)
             {
-                var request = AbstractTypeFactory<FileUploadRequest>.TryCreateInstance();
-                request.Scope = scope;
-                request.UserId = GetUserId();
-                request.FileName = contentDisposition.FileName.Value;
-                request.Stream = section.Body;
+                if (ContentDispositionHeaderValue.TryParse(section.ContentDisposition, out var contentDisposition) &&
+                    MultipartRequestHelper.HasFileContentDisposition(contentDisposition))
+                {
+                    var fileName = contentDisposition.FileName.Value;
 
-                result = await _fileUploadService.UploadFileAsync(request);
-            }
-            else
-            {
-                result = FileUploadError.InvalidContent();
+                    try
+                    {
+                        var request = AbstractTypeFactory<FileUploadRequest>.TryCreateInstance();
+                        request.Scope = scope;
+                        request.UserId = GetUserId();
+                        request.FileName = fileName;
+                        request.Stream = section.Body;
+
+                        var result = await _fileUploadService.UploadFileAsync(request);
+
+                        if (result.File?.Url != null)
+                        {
+                            // Hide real URL
+                            result.File.Url = Url.Action(nameof(DownloadFile), new { result.File.Id });
+                        }
+
+                        results.Add(result);
+                    }
+                    catch (Exception ex)
+                    {
+                        results.Add(FileUploadError.Exception(ex, fileName));
+                    }
+                }
+                else
+                {
+                    results.Add(FileUploadError.InvalidContent());
+                }
+
+                section = await reader.ReadNextSectionAsync();
             }
         }
         catch (Exception ex)
         {
-            result = FileUploadError.Exception(ex);
+            results.Add(FileUploadError.Exception(ex));
         }
 
-        if (result.File != null)
-        {
-            // Hide real URL
-            result.File.Url = Url.Action(nameof(GetFile), new { result.File.Id });
-        }
-
-        return result;
+        return results;
     }
 
     [HttpDelete("{id}")]

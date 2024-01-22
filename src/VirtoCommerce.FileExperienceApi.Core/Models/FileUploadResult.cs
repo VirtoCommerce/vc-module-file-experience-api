@@ -18,13 +18,19 @@ public class FileUploadResult
         return result;
     }
 
-    public static FileUploadResult Fail(string code, string message, object parameter = null)
+    public static FileUploadResult Fail(string code, string message, object parameter = null, string fileName = null)
     {
         var result = AbstractTypeFactory<FileUploadResult>.TryCreateInstance();
 
         result.ErrorCode = code;
         result.ErrorMessage = message;
         result.ErrorParameter = parameter;
+
+        if (fileName != null)
+        {
+            result.File = AbstractTypeFactory<File>.TryCreateInstance();
+            result.File.Name = fileName;
+        }
 
         return result;
     }
