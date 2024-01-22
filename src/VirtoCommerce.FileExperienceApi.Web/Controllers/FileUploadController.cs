@@ -74,10 +74,10 @@ public class FileUploadController : Controller
 
                         var result = await _fileUploadService.UploadFileAsync(request);
 
-                        if (result.File?.Url != null)
+                        if (result.Url != null)
                         {
                             // Hide real URL
-                            result.File.Url = Url.Action(nameof(DownloadFile), new { result.File.Id });
+                            result.Url = Url.Action(nameof(DownloadFile), new { result.Id });
                         }
 
                         results.Add(result);
