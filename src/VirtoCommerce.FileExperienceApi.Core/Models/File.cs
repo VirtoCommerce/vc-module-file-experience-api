@@ -9,6 +9,6 @@ public class File : Entity
     public string ContentType { get; set; }
     public long Size { get; set; }
     public string Url { get; set; }
-    public string OwnerId { get; set; }
-    public string OwnerType { get; set; }
+    public string OwnerEntityId { get; set; }
+    public string OwnerEntityType { get; set; }
 }

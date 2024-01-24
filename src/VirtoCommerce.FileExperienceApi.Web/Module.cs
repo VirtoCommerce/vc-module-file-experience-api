@@ -1,14 +1,17 @@
 using GraphQL.Server;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VirtoCommerce.ExperienceApiModule.Core.Extensions;
 using VirtoCommerce.ExperienceApiModule.Core.Infrastructure;
 using VirtoCommerce.FileExperienceApi.Core;
+using VirtoCommerce.FileExperienceApi.Core.Authorization;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.FileExperienceApi.Data;
+using VirtoCommerce.FileExperienceApi.Data.Authorization;
 using VirtoCommerce.FileExperienceApi.Data.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
@@ -31,6 +34,8 @@ public class Module : IModule, IHasConfiguration
 
         serviceCollection.AddOptions<FileUploadOptions>().Bind(Configuration.GetSection("FileUpload")).ValidateDataAnnotations();
         serviceCollection.AddSingleton<IFileUploadService, FileUploadService>();
+        serviceCollection.AddSingleton<IFileAuthorizationService, FileAuthorizationService>();
+        serviceCollection.AddSingleton<IAuthorizationHandler, FileAuthorizationHandler>();
     }
 
     public void PostInitialize(IApplicationBuilder appBuilder)

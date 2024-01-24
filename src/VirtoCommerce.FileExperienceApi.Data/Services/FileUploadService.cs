@@ -149,8 +149,8 @@ public class FileUploadService : IFileUploadService
 
         if (asset.Tenant != null)
         {
-            result.OwnerId = asset.Tenant.Id;
-            result.OwnerType = asset.Tenant.Type;
+            result.OwnerEntityId = asset.Tenant.Id;
+            result.OwnerEntityType = asset.Tenant.Type;
         }
 
         return result;
@@ -169,9 +169,9 @@ public class FileUploadService : IFileUploadService
         result.BlobInfo.Size = file.Size;
         result.BlobInfo.RelativeUrl = file.Url;
 
-        if (!string.IsNullOrEmpty(file.OwnerId) || !string.IsNullOrEmpty(file.OwnerType))
+        if (!string.IsNullOrEmpty(file.OwnerEntityId) || !string.IsNullOrEmpty(file.OwnerEntityType))
         {
-            result.Tenant = new TenantIdentity(file.OwnerId, file.OwnerType);
+            result.Tenant = new TenantIdentity(file.OwnerEntityId, file.OwnerEntityType);
         }
 
         return result;

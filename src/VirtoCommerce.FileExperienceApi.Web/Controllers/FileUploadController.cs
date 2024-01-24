@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -11,12 +10,12 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 using VirtoCommerce.AssetsModule.Core.Swagger;
 using VirtoCommerce.ExperienceApiModule.Core;
+using VirtoCommerce.FileExperienceApi.Core.Authorization;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.FileExperienceApi.Web.Filters;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Data.Helpers;
-using File = VirtoCommerce.FileExperienceApi.Core.Models.File;
 using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Security.Permissions;
 
 namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
@@ -26,28 +25,15 @@ namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
 public class FileUploadController : Controller
 {
     private readonly IFileUploadService _fileUploadService;
-    private readonly IAuthorizationService _authorizationService;
-    private readonly IEnumerable<IFileAuthorizationRequirementFactory> _requirementFactories;
+    private readonly IFileAuthorizationService _fileAuthorizationService;
     private static readonly FormOptions _defaultFormOptions = new();
 
     public FileUploadController(
         IFileUploadService fileUploadService,
-        IAuthorizationService authorizationService,
-        IEnumerable<IFileAuthorizationRequirementFactory> requirementFactories)
+        IFileAuthorizationService fileAuthorizationService)
     {
         _fileUploadService = fileUploadService;
-        _authorizationService = authorizationService;
-        _requirementFactories = requirementFactories;
-    }
-
-    [HttpGet("{scope}/options")]
-    public ActionResult<FileUploadOptions> GetOptions([FromRoute] string scope)
-    {
-        ActionResult result = TryGetOptions(scope, out var options)
-            ? Ok(options)
-            : NotFound();
-
-        return result;
+        _fileAuthorizationService = fileAuthorizationService;
     }
 
     [HttpPost("{scope}")]
@@ -128,7 +114,8 @@ public class FileUploadController : Controller
             return NotFound();
         }
 
-        if (!await Authorize(file, FilePermissions.Read))
+        var authorizationResult = await _fileAuthorizationService.AuthorizeAsync(User, file, FilePermissions.Read);
+        if (!authorizationResult.Succeeded)
         {
             return Forbid();
         }
@@ -137,46 +124,6 @@ public class FileUploadController : Controller
         return File(stream, file.ContentType, file.Name);
     }
 
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteFile([FromRoute] string id)
-    {
-        var file = await _fileUploadService.GetNoCloneAsync(id);
-        if (file is null)
-        {
-            return Ok();
-        }
-
-        if (!await Authorize(file, FilePermissions.Delete))
-        {
-            return Forbid();
-        }
-
-        await _fileUploadService.DeleteAsync(new[] { id });
-
-        return Ok();
-    }
-
-
-    private async Task<bool> Authorize(File file, string permission)
-    {
-        var factory = _requirementFactories.FirstOrDefault(x => x.Scope.EqualsInvariant(file.Scope));
-        var requirement = factory?.Create(file, permission);
-
-        if (requirement is null)
-        {
-            // Authorize request only if the file is not attached to any object (owner)
-            return string.IsNullOrEmpty(file.OwnerId);
-        }
-
-        var authorizationResult = await _authorizationService.AuthorizeAsync(User, file, requirement);
-        return authorizationResult.Succeeded;
-    }
-
-    private bool TryGetOptions(string scope, out FileUploadScopeOptions options)
-    {
-        options = _fileUploadService.GetOptions(scope);
-        return options != null;
-    }
 
     private string GetUserId()
     {
