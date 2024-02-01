@@ -17,8 +17,6 @@ public class OptionsQueryHandler : IQueryHandler<OptionsQuery, FileUploadScopeOp
 
     public Task<FileUploadScopeOptions> Handle(OptionsQuery request, CancellationToken cancellationToken)
     {
-        var result = _fileUploadService.GetOptions(request.Scope);
-
-        return Task.FromResult(result);
+        return _fileUploadService.GetOptionsAsync(request.Scope);
     }
 }

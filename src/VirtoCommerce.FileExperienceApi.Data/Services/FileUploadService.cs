@@ -8,7 +8,9 @@ using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.AssetsModule.Core.Services;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
+using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Settings;
 using File = VirtoCommerce.FileExperienceApi.Core.Models.File;
 using UrlHelpers = VirtoCommerce.Platform.Core.Extensions.UrlHelperExtensions;
 
@@ -16,35 +18,56 @@ namespace VirtoCommerce.FileExperienceApi.Data.Services;
 
 public class FileUploadService : IFileUploadService
 {
+    private readonly StringComparer _ignoreCase = StringComparer.OrdinalIgnoreCase;
+    private readonly string _whiteListSettingName = PlatformConstants.Settings.Security.FileExtensionsWhiteList.Name;
+    private readonly string _blackListSettingName = PlatformConstants.Settings.Security.FileExtensionsBlackList.Name;
+
     private readonly FileUploadOptions _options;
+    private readonly PlatformOptions _platformOptions;
+    private readonly ISettingsManager _settingsManager;
     private readonly IAssetEntryService _assetEntryService;
     private readonly IBlobStorageProvider _blobProvider;
 
     public FileUploadService(
         IOptions<FileUploadOptions> options,
+        IOptions<PlatformOptions> platformOptions,
+        ISettingsManager settingsManager,
         IAssetEntryService assetEntryService,
         IBlobStorageProvider blobProvider)
     {
         _options = options.Value;
+        _platformOptions = platformOptions.Value;
+        _settingsManager = settingsManager;
         _assetEntryService = assetEntryService;
         _blobProvider = blobProvider;
     }
 
-    public virtual FileUploadScopeOptions GetOptions(string scope)
+    public virtual async Task<FileUploadScopeOptions> GetOptionsAsync(string scope)
     {
-        return _options.Scopes.FirstOrDefault(x => x.Scope.EqualsInvariant(scope));
+        var options = _options.Scopes.FirstOrDefault(x => x.Scope.EqualsInvariant(scope));
+        if (options == null)
+        {
+            return null;
+        }
+
+        return new FileUploadScopeOptions
+        {
+            Scope = options.Scope,
+            MaxFileSize = options.MaxFileSize,
+            AllowedExtensions = await GetEffectiveAllowedExtensions(options.AllowedExtensions),
+        };
     }
 
     public virtual async Task<FileUploadResult> UploadFileAsync(FileUploadRequest request)
     {
-        var options = GetOptions(request.Scope);
+        var options = await GetOptionsAsync(request.Scope);
         if (options is null)
         {
             return FileUploadError.InvalidScope(request.Scope, request.FileName);
         }
 
         var fileExtension = Path.GetExtension(request.FileName);
-        if (!options.AllowedExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase))
+        if (!options.AllowedExtensions.Contains(fileExtension, _ignoreCase))
         {
             return FileUploadError.InvalidExtension(options.AllowedExtensions, request.FileName);
         }
@@ -117,6 +140,50 @@ public class FileUploadService : IFileUploadService
         return _assetEntryService.SaveChangesAsync(assets);
     }
 
+
+    protected virtual async Task<IList<string>> GetEffectiveAllowedExtensions(IList<string> allowedExtensions)
+    {
+        IList<string> result;
+
+        var whiteList = await GetWhiteList();
+
+        if (allowedExtensions.IsNullOrEmpty())
+        {
+            result = whiteList.IsNullOrEmpty()
+                ? Array.Empty<string>()
+                : whiteList;
+        }
+        else
+        {
+            result = whiteList.IsNullOrEmpty()
+                ? allowedExtensions.Except(await GetBlackList(), _ignoreCase).ToArray()
+                : allowedExtensions.Intersect(whiteList, _ignoreCase).ToArray();
+        }
+
+        return result;
+    }
+
+    protected virtual Task<IList<string>> GetWhiteList()
+    {
+        return CombineSettingValues(_whiteListSettingName, _platformOptions.FileExtensionsWhiteList);
+    }
+
+    protected virtual Task<IList<string>> GetBlackList()
+    {
+        return CombineSettingValues(_blackListSettingName, _platformOptions.FileExtensionsBlackList);
+    }
+
+    protected virtual async Task<IList<string>> CombineSettingValues(string settingName, IList<string> otherValues)
+    {
+        var setting = await _settingsManager.GetObjectSettingAsync(settingName);
+
+        var blackList = setting.AllowedValues.OfType<string>()
+            .Union(otherValues, _ignoreCase)
+            .OrderBy(x => x)
+            .ToList();
+
+        return blackList;
+    }
 
     protected virtual string BuildFileUrl(params string[] parts)
     {

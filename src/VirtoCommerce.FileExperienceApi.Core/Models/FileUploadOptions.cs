@@ -9,5 +9,5 @@ public class FileUploadOptions
     public string RootPath { get; set; } = "upload";
 
     [Required]
-    public List<FileUploadScopeOptions> Scopes { get; set; } = new();
+    public IList<FileUploadScopeOptions> Scopes { get; set; } = new List<FileUploadScopeOptions>();
 }

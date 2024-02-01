@@ -8,7 +8,7 @@ namespace VirtoCommerce.FileExperienceApi.Core.Services
 {
     public interface IFileUploadService : ICrudService<File>
     {
-        FileUploadScopeOptions GetOptions(string scope);
+        Task<FileUploadScopeOptions> GetOptionsAsync(string scope);
         Task<FileUploadResult> UploadFileAsync(FileUploadRequest request);
         Task<Stream> OpenReadAsync(string id);
     }
