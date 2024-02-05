@@ -76,7 +76,7 @@ public class FileUploadService : IFileUploadService
         await using (var targetStream = await _blobProvider.OpenWriteAsync(blobInfo.RelativeUrl))
         {
             await request.Stream.CopyToAsync(targetStream);
-            blobInfo.Size = targetStream.Length;
+            blobInfo.Size = targetStream.Position;
         }
 
         if (blobInfo.Size > options.MaxFileSize)
