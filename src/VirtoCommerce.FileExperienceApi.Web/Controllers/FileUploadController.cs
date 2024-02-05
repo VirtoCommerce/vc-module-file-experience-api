@@ -138,8 +138,20 @@ public class FileUploadController : Controller
             return Forbid();
         }
 
-        var stream = await _fileUploadService.OpenReadAsync(id);
-        return File(stream, file.ContentType, file.Name);
+        Stream stream;
+
+        try
+        {
+            stream = await _fileUploadService.OpenReadAsync(id);
+        }
+        catch
+        {
+            stream = null;
+        }
+
+        return stream is null
+            ? NotFound()
+            : File(stream, file.ContentType, file.Name);
     }
 
 
