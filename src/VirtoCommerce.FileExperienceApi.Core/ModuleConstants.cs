@@ -6,7 +6,7 @@ public static class ModuleConstants
     {
         public static class Permissions
         {
-            public const string Access = "Files:access";
+            public const string Access = "FileExperienceApi:access";
             public const string Create = "FileExperienceApi:create";
             public const string Read = "FileExperienceApi:read";
             public const string Update = "FileExperienceApi:update";

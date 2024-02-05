@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <module>
   <id>VirtoCommerce.FileExperienceApi</id>
-  <version>3.400.0</version>
+  <version>3.800.0</version>
   <version-tag></version-tag>
 
-  <platformVersion>3.414.19</platformVersion>
+  <platformVersion>3.800.0</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.ExperienceApi" version="3.411.6" />
+    <dependency id="VirtoCommerce.Assets" version="3.801.0" />
+    <dependency id="VirtoCommerce.ExperienceApi" version="3.800.0" />
   </dependencies>
 
   <title>Virto Commerce FileExperienceApi module</title>
