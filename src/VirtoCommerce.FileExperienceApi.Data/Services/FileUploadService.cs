@@ -37,7 +37,7 @@ public class FileUploadService : IFileUploadService
 
     public virtual async Task<FileUploadScopeOptions> GetOptionsAsync(string scope)
     {
-        var options = _options.Scopes.FirstOrDefault(x => x.Scope.EqualsInvariant(scope));
+        var options = GetOptions(scope);
         if (options == null)
         {
             return null;
@@ -47,22 +47,22 @@ public class FileUploadService : IFileUploadService
         {
             Scope = options.Scope,
             MaxFileSize = options.MaxFileSize,
-            AllowedExtensions = await GetEffectiveAllowedExtensions(options.AllowedExtensions),
+            AllowedExtensions = await GetEffectiveAllowedExtensionsAsync(options.AllowedExtensions),
         };
     }
 
     public virtual async Task<FileUploadResult> UploadFileAsync(FileUploadRequest request)
     {
-        var options = await GetOptionsAsync(request.Scope);
+        var options = GetOptions(request.Scope);
         if (options is null)
         {
             return FileUploadError.InvalidScope(request.Scope, request.FileName);
         }
 
         var fileExtension = Path.GetExtension(request.FileName);
-        if (!options.AllowedExtensions.Contains(fileExtension, _ignoreCase))
+        if (!await IsExtensionAllowedAsync(fileExtension, options.AllowedExtensions))
         {
-            return FileUploadError.InvalidExtension(options.AllowedExtensions, request.FileName);
+            return FileUploadError.InvalidExtension(await GetEffectiveAllowedExtensionsAsync(options.AllowedExtensions), request.FileName);
         }
 
         var blobInfo = AbstractTypeFactory<BlobInfo>.TryCreateInstance();
@@ -134,7 +134,23 @@ public class FileUploadService : IFileUploadService
     }
 
 
-    protected virtual async Task<IList<string>> GetEffectiveAllowedExtensions(IList<string> allowedExtensions)
+    protected virtual FileUploadScopeOptions GetOptions(string scope)
+    {
+        return _options.Scopes.FirstOrDefault(x => x.Scope.EqualsInvariant(scope));
+    }
+
+    protected virtual async Task<bool> IsExtensionAllowedAsync(string extension, IList<string> allowedExtensions)
+    {
+        if (allowedExtensions.IsNullOrEmpty())
+        {
+            return await _fileExtensionService.IsExtensionAllowedAsync(extension);
+        }
+
+        return allowedExtensions.Contains(extension, _ignoreCase) &&
+               await _fileExtensionService.IsExtensionAllowedAsync(extension);
+    }
+
+    protected virtual async Task<IList<string>> GetEffectiveAllowedExtensionsAsync(IList<string> allowedExtensions)
     {
         IList<string> result;
 
