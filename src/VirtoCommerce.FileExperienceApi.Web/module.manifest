@@ -6,7 +6,7 @@
 
   <platformVersion>3.800.0</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Assets" version="3.801.0-alpha.116-vcst-121" />
+    <dependency id="VirtoCommerce.Assets" version="3.801.0" />
     <dependency id="VirtoCommerce.ExperienceApi" version="3.800.0" />
   </dependencies>
 
