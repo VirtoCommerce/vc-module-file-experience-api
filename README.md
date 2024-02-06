@@ -11,6 +11,10 @@ The Virto Commerce XAPI now provides a comprehensive file upload architecture (X
 4. **Ready to Use with Client Applications:** XAPI supports file usage with mutations and queries, enabling seamless integration with client applications.
 5. **Security:** Anonymous file uploads are disabled by default, ensuring a security-first approach. Clean answers are provided for security inquiries.
 
+## Architecture
+
+![image](https://github.com/VirtoCommerce/vc-module-file-experience-api/assets/7639413/b10f31da-cde9-425f-b097-5a3f026fea7e)
+
 ## Samples
 Quotes module and Virto Storefront can be one of the examples how to use File Experience.
 
