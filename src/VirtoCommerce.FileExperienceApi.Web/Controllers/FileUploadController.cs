@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +23,6 @@ using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Sec
 namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
 
 [Route("api/files")]
-[Authorize]
 public class FileUploadController : Controller
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
