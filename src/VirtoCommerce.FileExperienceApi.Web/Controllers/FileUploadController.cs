@@ -22,6 +22,7 @@ using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Sec
 
 namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
 
+// Don't add Authorize Attribute. Authorize Attribute activates the option that blocks Rest API requests for Customer accounts.
 [Route("api/files")]
 public class FileUploadController : Controller
 {
@@ -153,11 +154,12 @@ public class FileUploadController : Controller
     }
 
 
-    // Temporary workaround for requests from the storefront. Delete after getting rid of the storefront.
+
     private async Task<ClaimsPrincipal> GetCurrentUser()
     {
         var principal = User;
 
+        // Temporary workaround for requests from the storefront. Delete after getting rid of the storefront.
         if (Request.Headers.TryGetValue("VirtoCommerce-User-Name", out var userNameFromHeader) &&
             principal.IsInRole(PlatformConstants.Security.SystemRoles.Administrator))
         {
