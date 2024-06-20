@@ -1,4 +1,4 @@
-using VirtoCommerce.ExperienceApiModule.Core.Schemas;
+using VirtoCommerce.Xapi.Core.Schemas;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 
 namespace VirtoCommerce.FileExperienceApi.Data.Schemas;
