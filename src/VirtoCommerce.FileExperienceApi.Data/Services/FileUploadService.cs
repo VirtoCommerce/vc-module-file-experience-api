@@ -48,6 +48,7 @@ public class FileUploadService : IFileUploadService
             Scope = options.Scope,
             MaxFileSize = options.MaxFileSize,
             AllowedExtensions = await GetEffectiveAllowedExtensionsAsync(options.AllowedExtensions),
+            AllowAnonymousUpload = options.AllowAnonymousUpload,
         };
     }
 
