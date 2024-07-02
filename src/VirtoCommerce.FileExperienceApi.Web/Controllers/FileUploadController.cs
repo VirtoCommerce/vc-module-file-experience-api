@@ -165,11 +165,9 @@ public class FileUploadController : Controller
         if (Request.Headers.TryGetValue("VirtoCommerce-User-Name", out var userNameFromHeader) &&
             principal.IsInRole(PlatformConstants.Security.SystemRoles.Administrator))
         {
-            if (userNameFromHeader == AnonymousUser.UserName)
-            {
-                principal = new ClaimsPrincipal();
-            }
-            else
+            principal = null;
+
+            if (userNameFromHeader != AnonymousUser.UserName)
             {
                 var user = await _signInManager.UserManager.FindByNameAsync(userNameFromHeader);
                 if (user != null)
