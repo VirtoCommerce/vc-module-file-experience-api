@@ -13,5 +13,7 @@ namespace VirtoCommerce.FileExperienceApi.Core.Models
 
         [Required]
         public IList<string> AllowedExtensions { get; set; } = new List<string>();
+
+        public bool AllowAnonymousUpload { get; set; }
     }
 }
