@@ -10,5 +10,6 @@ public class FileUploadScopeOptionsType : ExtendableGraphType<FileUploadScopeOpt
         Field(x => x.Scope);
         Field(x => x.MaxFileSize);
         Field(x => x.AllowedExtensions);
+        Field(x => x.AllowAnonymousUpload);
     }
 }

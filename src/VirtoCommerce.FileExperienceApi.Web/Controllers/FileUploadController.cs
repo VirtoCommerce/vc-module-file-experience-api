@@ -46,8 +46,10 @@ public class FileUploadController : Controller
     [DisableFormValueModelBinding]
     public async Task<ActionResult<IList<FileUploadResult>>> UploadFiles([FromRoute] string scope)
     {
-        var user = await GetCurrentUser();
-        if (user is null)
+        var userId = GetUserId(await GetCurrentUser());
+        var options = await _fileUploadService.GetOptionsAsync(scope);
+
+        if (!options.AllowAnonymousUpload && userId == AnonymousUser.UserName)
         {
             return Forbid();
         }
@@ -95,7 +97,7 @@ public class FileUploadController : Controller
             {
                 var request = AbstractTypeFactory<FileUploadRequest>.TryCreateInstance();
                 request.Scope = scope;
-                request.UserId = GetUserId(user);
+                request.UserId = userId;
                 request.FileName = fileName;
                 request.Stream = stream;
 
@@ -181,8 +183,8 @@ public class FileUploadController : Controller
     private static string GetUserId(ClaimsPrincipal user)
     {
         return
-            user.FindFirstValue(ClaimTypes.NameIdentifier) ??
-            user.FindFirstValue("name") ??
+            user?.FindFirstValue(ClaimTypes.NameIdentifier) ??
+            user?.FindFirstValue("name") ??
             AnonymousUser.UserName;
     }
 }
