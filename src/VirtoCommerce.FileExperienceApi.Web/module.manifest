@@ -10,7 +10,7 @@
     <dependency id="VirtoCommerce.Assets" version="3.801.0" />
   </dependencies>
 
-  <title>File Experience Api</title>
+  <title>File Experience API</title>
   <description>Manages all file-related operations, from file upload to file content download for different client applications.</description>
 
   <authors>
