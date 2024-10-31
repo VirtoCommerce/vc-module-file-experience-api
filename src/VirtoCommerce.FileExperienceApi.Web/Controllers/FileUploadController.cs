@@ -182,9 +182,6 @@ public class FileUploadController : Controller
 
     private static string GetUserId(ClaimsPrincipal user)
     {
-        return
-            user?.FindFirstValue(ClaimTypes.NameIdentifier) ??
-            user?.FindFirstValue("name") ??
-            AnonymousUser.UserName;
+        return user?.GetUserId() ?? AnonymousUser.UserName;
     }
 }
