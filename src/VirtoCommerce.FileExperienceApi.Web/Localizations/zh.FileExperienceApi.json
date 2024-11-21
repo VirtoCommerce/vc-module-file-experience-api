@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "FileExperienceApi:access": "打开 FileExperienceApi 菜单",
+    "FileExperienceApi:create": "创建与 FileExperienceApi 相关的数据",
+    "FileExperienceApi:read": "查看与 FileExperienceApi 相关的数据",
+    "FileExperienceApi:update": "更新与 FileExperienceApi 相关的数据",
+    "FileExperienceApi:delete": "删除与 FileExperienceApi 相关的数据"
+  }
+}
