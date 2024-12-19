@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "FileExperienceApi:access": "FileExperienceApiメニューを開く",
+    "FileExperienceApi:create": "FileExperienceApi関連データを作成",
+    "FileExperienceApi:read": "FileExperienceApi関連データを表示",
+    "FileExperienceApi:update": "FileExperienceApi関連データを更新",
+    "FileExperienceApi:delete": "FileExperienceApi関連データを削除"
+  }
+}
