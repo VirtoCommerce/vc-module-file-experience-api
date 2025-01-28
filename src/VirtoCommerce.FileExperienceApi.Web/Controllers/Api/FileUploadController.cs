@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,10 @@ using VirtoCommerce.Platform.Data.Helpers;
 using static VirtoCommerce.Xapi.Core.ModuleConstants;
 using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Security.Permissions;
 
-namespace VirtoCommerce.FileExperienceApi.Web.Controllers;
+namespace VirtoCommerce.FileExperienceApi.Web.Controllers.Api;
 
-// Don't add Authorize Attribute. Authorize Attribute activates the option that blocks Rest API requests for Customer accounts.
+[Authorize]
+[AllowAnonymous]
 [Route("api/files")]
 public class FileUploadController : Controller
 {
