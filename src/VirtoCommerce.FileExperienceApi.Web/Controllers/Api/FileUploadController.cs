@@ -52,6 +52,12 @@ public class FileUploadController : Controller
         var userId = GetUserId(await GetCurrentUser());
         var options = await _fileUploadService.GetOptionsAsync(scope);
 
+        if (options is null)
+        {
+            // Options for the scope are not defined or the scope is invalid.
+            return StatusCode(StatusCodes.Status400BadRequest);
+        }
+
         if (!options.AllowAnonymousUpload && userId == AnonymousUser.UserName)
         {
             // Forbid() redirects to /Account/AccessDenied when there is no authorization header in the request.
