@@ -53,8 +53,7 @@ public class FileUploadController : Controller
 
         if (options is null)
         {
-            // Options for the scope are not defined or the scope is invalid.
-            return new[] { FileUploadError.InvalidScope(scope, null) };
+            return new[] { FileUploadError.InvalidScope(scope) };
         }
 
         var userId = GetUserId(await GetCurrentUser());
