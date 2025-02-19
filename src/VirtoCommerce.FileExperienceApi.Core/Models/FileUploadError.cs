@@ -20,7 +20,7 @@ public static class FileUploadError
         return FileUploadResult.Fail("EXCEPTION", ex.Message, parameter: null, fileName);
     }
 
-    public static FileUploadResult InvalidScope(string scope, string fileName)
+    public static FileUploadResult InvalidScope(string scope, string fileName = null)
     {
         return FileUploadResult.Fail("INVALID_SCOPE", $"Unknown scope '{scope}'", scope, fileName);
     }

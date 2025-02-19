@@ -49,8 +49,14 @@ public class FileUploadController : Controller
     [DisableFormValueModelBinding]
     public async Task<ActionResult<IList<FileUploadResult>>> UploadFiles([FromRoute] string scope)
     {
-        var userId = GetUserId(await GetCurrentUser());
         var options = await _fileUploadService.GetOptionsAsync(scope);
+
+        if (options is null)
+        {
+            return new[] { FileUploadError.InvalidScope(scope) };
+        }
+
+        var userId = GetUserId(await GetCurrentUser());
 
         if (!options.AllowAnonymousUpload && userId == AnonymousUser.UserName)
         {
