@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using VirtoCommerce.FileExperienceApi.Core.Models;
@@ -11,5 +13,7 @@ namespace VirtoCommerce.FileExperienceApi.Core.Services
         Task<FileUploadScopeOptions> GetOptionsAsync(string scope);
         Task<FileUploadResult> UploadFileAsync(FileUploadRequest request);
         Task<Stream> OpenReadAsync(string id);
+        Task<IList<File>> GetFiles(IList<string> urls, string attachmentsUrlPrefix = null);
+        T ConvertTo<T>(File file, Action<T, File> converter, string attachmentsUrlPrefix = null) where T : IHasUrl;
     }
 }
