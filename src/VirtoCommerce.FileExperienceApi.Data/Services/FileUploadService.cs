@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.AssetsModule.Core.Services;
+using VirtoCommerce.FileExperienceApi.Core.Extensions;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -153,6 +154,14 @@ public class FileUploadService : IFileUploadService
         var files = await GetAsync(ids);
 
         return files;
+    }
+
+    public virtual Dictionary<string, File> FilesToScopeOwnerDictionary<T>(IList<File> files, string scope, T owner, string attachmentsUrlPrefix = null) where T : Entity
+    {
+        return files
+            .Where(x => x.Scope == scope &&
+                        (x.OwnerIsEmpty() || x.OwnerIs(nameof(T), owner.Id)))
+            .ToDictionary(x => GetFileUrl(x.Id, attachmentsUrlPrefix), _ignoreCase);
     }
 
     protected virtual FileUploadScopeOptions GetOptions(string scope)
