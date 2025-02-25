@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.AssetsModule.Core.Services;
+using VirtoCommerce.FileExperienceApi.Core.Extensions;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -16,6 +17,7 @@ namespace VirtoCommerce.FileExperienceApi.Data.Services;
 
 public class FileUploadService : IFileUploadService
 {
+    private const string _attachmentsUrlPrefix = "/api/files/";
     private readonly StringComparer _ignoreCase = StringComparer.OrdinalIgnoreCase;
 
     private readonly FileUploadOptions _options;
@@ -134,6 +136,33 @@ public class FileUploadService : IFileUploadService
         return _assetEntryService.SaveChangesAsync(assets);
     }
 
+    public virtual T ConvertTo<T>(File file, Action<T, File> converter, string attachmentsUrlPrefix = null) where T : IHasUrl
+    {
+        var obj = AbstractTypeFactory<T>.TryCreateInstance();
+        converter(obj, file);
+        obj.Url = GetFileUrl(file.Id, attachmentsUrlPrefix);
+        return obj;
+    }
+
+    public virtual async Task<IList<File>> GetFiles(IList<string> urls, string attachmentsUrlPrefix = null)
+    {
+        var ids = urls
+            .Select(x => GetFileId(x, attachmentsUrlPrefix))
+            .Where(x => !string.IsNullOrEmpty(x))
+            .ToList();
+
+        var files = await GetAsync(ids);
+
+        return files;
+    }
+
+    public virtual Dictionary<string, File> FilesToScopeOwnerDictionary<T>(IList<File> files, string scope, T owner, string attachmentsUrlPrefix = null) where T : Entity
+    {
+        return files
+            .Where(x => x.Scope == scope &&
+                        (x.OwnerIsEmpty() || x.OwnerIs(nameof(T), owner.Id)))
+            .ToDictionary(x => GetFileUrl(x.Id, attachmentsUrlPrefix), _ignoreCase);
+    }
 
     protected virtual FileUploadScopeOptions GetOptions(string scope)
     {
@@ -235,5 +264,17 @@ public class FileUploadService : IFileUploadService
     protected virtual string NewGuid()
     {
         return Guid.NewGuid().ToString("N");
+    }
+
+    protected static string GetFileUrl(string id, string attachmentsUrlPrefix = null)
+    {
+        return $"{attachmentsUrlPrefix ?? _attachmentsUrlPrefix}{id}";
+    }
+
+    protected static string GetFileId(string url, string attachmentsUrlPrefix = null)
+    {
+        return url != null && url.StartsWith(attachmentsUrlPrefix ?? _attachmentsUrlPrefix)
+            ? url[(attachmentsUrlPrefix?.Length ?? _attachmentsUrlPrefix.Length)..]
+            : null;
     }
 }
