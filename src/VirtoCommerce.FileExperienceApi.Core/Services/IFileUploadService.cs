@@ -16,6 +16,6 @@ namespace VirtoCommerce.FileExperienceApi.Core.Services
         Task<Stream> OpenReadAsync(string id);
         Task<IList<File>> GetFiles(IList<string> urls, string attachmentsUrlPrefix = null);
         T ConvertTo<T>(File file, Action<T, File> converter, string attachmentsUrlPrefix = null) where T : IHasUrl;
-        Dictionary<string, File> FilesToScopeOwnerDictionary<T>(IList<File> files, string scope, T owner, string attachmentsUrlPrefix = null) where T : Entity
+        Dictionary<string, File> FilesToScopeOwnerDictionary<T>(IList<File> files, string scope, T owner, string attachmentsUrlPrefix = null) where T : Entity;
     }
 }
