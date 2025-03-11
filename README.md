@@ -1,15 +1,14 @@
-# Virto Commerce File Experience Module
+# Virto Commerce File Experience API
 
-## Overview
 The Virto Commerce XAPI now provides a comprehensive file upload architecture (X-Files) based on key principles to enhance developer experience, security, and extensibility. This architecture is designed to support different file providers, offer an intuitive developer experience, facilitate extensible post-processing, and seamlessly integrate with XAPI (GraphQL).
 
-## Key Features:
+## Key Features
 
-1. **Isolation:** File upload operations are scoped, allowing for defined settings and isolation from mutations. The process involves uploading files to blob storage and then manipulating them via XAPI, creating the Xapi.FileUpload module.
-2. **Intuitive Developer Experience:** The file upload process supports different upload processes with customizable validation rules, such as file extensions, count, size limits, and antivirus scanning. Developers can access core validation settings by scope for client-side validation.
-3. **Extensible Post Processing:** File upload process supports post-processing actions like AI integration, leveraging a pipelines architecture for extensibility.
-4. **Ready to Use with Client Applications:** XAPI supports file usage with mutations and queries, enabling seamless integration with client applications.
-5. **Security:** Anonymous file uploads are disabled by default, ensuring a security-first approach. Clean answers are provided for security inquiries.
+* **Isolation:** File upload operations are scoped, allowing for defined settings and isolation from mutations. The process involves uploading files to blob storage and then manipulating them via XAPI, creating the Xapi.FileUpload module.
+* **Intuitive Developer Experience:** The file upload process supports different upload processes with customizable validation rules, such as file extensions, count, size limits, and antivirus scanning. Developers can access core validation settings by scope for client-side validation.
+* **Extensible Post Processing:** File upload process supports post-processing actions like AI integration, leveraging a pipelines architecture for extensibility.
+* **Ready to Use with Client Applications:** XAPI supports file usage with mutations and queries, enabling seamless integration with client applications.
+* **Security:** Anonymous file uploads are disabled by default, ensuring a security-first approach. Clean answers are provided for security inquiries.
 
 ## Architecture
 
@@ -93,11 +92,22 @@ mutation {
 }
 ```
     
+## Documentation
+
+* [Getting started](https://docs.virtocommerce.org/platform/developer-guide/GraphQL-Storefront-API-Reference-xAPI/File/getting-started/)
+* [REST API](https://virtostart-demo-admin.govirto.com/docs/index.html?urls.primaryName=VirtoCommerce.FileExperienceApi)
+* [GraphQL](https://docs.virtocommerce.org/platform/developer-guide/GraphQL-Storefront-API-Reference-xAPI/File/overview/)
+* [View on GitHub](https://github.com/VirtoCommerce/vc-module-file-experience-api)
+
 ## References
-* Home: https://virtocommerce.com
-* Documantation: https://docs.virtocommerce.org
-* Community: https://www.virtocommerce.org
-* [Download Latest Release](https://github.com/VirtoCommerce/c-module-file-experience-api/releases/latest)
+
+* [Deployment](https://docs.virtocommerce.org/platform/developer-guide/Tutorials-and-How-tos/Tutorials/deploy-module-from-source-code/)
+* [Installation](https://docs.virtocommerce.org/platform/user-guide/modules-installation/)
+* [Home](https://virtocommerce.com)
+* [Community](https://www.virtocommerce.org)
+* [Download latest release](https://github.com/VirtoCommerce/vc-module-file-experience-api/releases/latest)
+
+
 
 ## License
 Copyright (c) Virto Solutions LTD.  All rights reserved.
