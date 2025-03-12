@@ -1,6 +1,6 @@
-# Virto Commerce File Experience API
+# Virto Commerce File Experience API (xFiles) Module
 
-The Virto Commerce XAPI now provides a comprehensive file upload architecture (X-Files) based on key principles to enhance developer experience, security, and extensibility. This architecture is designed to support different file providers, offer an intuitive developer experience, facilitate extensible post-processing, and seamlessly integrate with XAPI (GraphQL).
+The Virto Commerce xAPI now provides a comprehensive file upload architecture (xFiles) based on key principles to enhance developer experience, security, and extensibility. This architecture is designed to support different file providers, offer an intuitive developer experience, facilitate extensible post-processing, and seamlessly integrate with XAPI (GraphQL).
 
 ## Key Features
 
