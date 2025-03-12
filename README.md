@@ -15,7 +15,7 @@ The Virto Commerce XAPI now provides a comprehensive file upload architecture (X
 ![image](https://github.com/VirtoCommerce/vc-module-file-experience-api/assets/7639413/b10f31da-cde9-425f-b097-5a3f026fea7e)
 
 ## Samples
-Quotes module and Virto Storefront can be one of the examples how to use File Experience.
+The Quote module and the Frontend Application can be one of the examples how to use File Experience.
 
 ## Getting Started
 1. **Register Upload Scope:** - Update appsettings.json with file upload scope settings.
