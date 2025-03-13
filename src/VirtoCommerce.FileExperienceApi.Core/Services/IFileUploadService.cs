@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using VirtoCommerce.FileExperienceApi.Core.Models;
@@ -12,8 +11,5 @@ namespace VirtoCommerce.FileExperienceApi.Core.Services
         Task<FileUploadScopeOptions> GetOptionsAsync(string scope);
         Task<FileUploadResult> UploadFileAsync(FileUploadRequest request);
         Task<Stream> OpenReadAsync(string id);
-        Task<IList<File>> GetByPublicUrlAsync(IList<string> urls, string responseGroup = null, bool clone = true);
-        string GetFileId(string publicUrl);
-        string GetPublicUrl(string fileId);
     }
 }

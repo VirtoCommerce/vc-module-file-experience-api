@@ -10,6 +10,7 @@ using VirtoCommerce.FileExperienceApi.Core.Extensions;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
+using static VirtoCommerce.FileExperienceApi.Core.Extensions.FileUploadServiceExtensions;
 using File = VirtoCommerce.FileExperienceApi.Core.Models.File;
 using UrlHelpers = VirtoCommerce.Platform.Core.Extensions.UrlHelperExtensions;
 
@@ -17,7 +18,6 @@ namespace VirtoCommerce.FileExperienceApi.Data.Services;
 
 public class FileUploadService : IFileUploadService
 {
-    private const string _publicUrlPrefix = "/api/files/";
     private readonly StringComparer _ignoreCase = StringComparer.OrdinalIgnoreCase;
 
     private readonly FileUploadOptions _options;
@@ -106,28 +106,6 @@ public class FileUploadService : IFileUploadService
         return asset is null
             ? null
             : await _blobProvider.OpenReadAsync(asset.BlobInfo.RelativeUrl);
-    }
-
-    public virtual Task<IList<File>> GetByPublicUrlAsync(IList<string> urls, string responseGroup = null, bool clone = true)
-    {
-        var ids = urls
-            .Select(GetFileId)
-            .Where(x => !string.IsNullOrEmpty(x))
-            .ToList();
-
-        return GetAsync(ids, responseGroup, clone);
-    }
-
-    public virtual string GetFileId(string publicUrl)
-    {
-        return publicUrl != null && publicUrl.StartsWith(_publicUrlPrefix)
-            ? publicUrl[_publicUrlPrefix.Length..]
-            : null;
-    }
-
-    public virtual string GetPublicUrl(string fileId)
-    {
-        return $"{_publicUrlPrefix}{fileId}";
     }
 
     public async Task<IList<File>> GetAsync(IList<string> ids, string responseGroup = null, bool clone = true)
