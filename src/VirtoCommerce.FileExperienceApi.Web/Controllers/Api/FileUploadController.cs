@@ -116,7 +116,7 @@ public class FileUploadController : Controller
                 if (result.Url != null)
                 {
                     // Hide real URL
-                    result.Url = Url.Action(nameof(DownloadFile), new { result.Id });
+                    result.Url = result.PublicUrl;
                 }
 
                 return result;

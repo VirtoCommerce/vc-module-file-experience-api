@@ -19,6 +19,7 @@ public class FileUploadResult : File
         result.ContentType = file.ContentType;
         result.Size = file.Size;
         result.Url = file.Url;
+        result.PublicUrl = file.PublicUrl;
 
         return result;
     }

@@ -28,7 +28,7 @@
   <moduleType>VirtoCommerce.FileExperienceApi.Web.Module, VirtoCommerce.FileExperienceApi.Web</moduleType>
 
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2024-2025 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2024–2025 Virto Commerce. All rights reserved</copyright>
   <tags>extension module</tags>
   <useFullTypeNameInSwagger>false</useFullTypeNameInSwagger>
 </module>

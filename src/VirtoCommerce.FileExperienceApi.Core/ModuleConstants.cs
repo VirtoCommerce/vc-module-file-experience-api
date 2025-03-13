@@ -13,13 +13,13 @@ public static class ModuleConstants
             public const string Delete = "FileExperienceApi:delete";
 
             public static string[] AllPermissions { get; } =
-            {
+            [
                 Access,
                 Create,
                 Read,
                 Update,
                 Delete,
-            };
+            ];
         }
     }
 }

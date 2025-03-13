@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.AssetsModule.Core.Assets;
 using VirtoCommerce.AssetsModule.Core.Services;
+using VirtoCommerce.FileExperienceApi.Core.Extensions;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -16,6 +17,7 @@ namespace VirtoCommerce.FileExperienceApi.Data.Services;
 
 public class FileUploadService : IFileUploadService
 {
+    private const string _publicUrlPrefix = "/api/files/";
     private readonly StringComparer _ignoreCase = StringComparer.OrdinalIgnoreCase;
 
     private readonly FileUploadOptions _options;
@@ -82,7 +84,7 @@ public class FileUploadService : IFileUploadService
 
         if (blobInfo.Size > options.MaxFileSize)
         {
-            await _blobProvider.RemoveAsync(new[] { blobInfo.RelativeUrl });
+            await _blobProvider.RemoveAsync([blobInfo.RelativeUrl]);
             return FileUploadError.InvalidSize(options.MaxFileSize, request.FileName);
         }
 
@@ -91,7 +93,7 @@ public class FileUploadService : IFileUploadService
         asset.Group = options.Scope;
         asset.BlobInfo = blobInfo;
 
-        await _assetEntryService.SaveChangesAsync(new[] { asset });
+        await _assetEntryService.SaveChangesAsync([asset]);
 
         var file = ConvertToFile(asset);
         return FileUploadResult.Success(file);
@@ -104,6 +106,28 @@ public class FileUploadService : IFileUploadService
         return asset is null
             ? null
             : await _blobProvider.OpenReadAsync(asset.BlobInfo.RelativeUrl);
+    }
+
+    public virtual Task<IList<File>> GetByPublicUrlAsync(IList<string> urls, string responseGroup = null, bool clone = true)
+    {
+        var ids = urls
+            .Select(GetFileId)
+            .Where(x => !string.IsNullOrEmpty(x))
+            .ToList();
+
+        return GetAsync(ids, responseGroup, clone);
+    }
+
+    public virtual string GetFileId(string publicUrl)
+    {
+        return publicUrl != null && publicUrl.StartsWith(_publicUrlPrefix)
+            ? publicUrl[_publicUrlPrefix.Length..]
+            : null;
+    }
+
+    public virtual string GetPublicUrl(string fileId)
+    {
+        return $"{_publicUrlPrefix}{fileId}";
     }
 
     public async Task<IList<File>> GetAsync(IList<string> ids, string responseGroup = null, bool clone = true)
@@ -193,6 +217,7 @@ public class FileUploadService : IFileUploadService
 
         result.Id = asset.Id;
         result.Scope = asset.Group;
+        result.PublicUrl = GetPublicUrl(asset.Id);
 
         if (asset.BlobInfo != null)
         {
@@ -224,7 +249,7 @@ public class FileUploadService : IFileUploadService
         result.BlobInfo.Size = file.Size;
         result.BlobInfo.RelativeUrl = file.Url;
 
-        if (!string.IsNullOrEmpty(file.OwnerEntityId) || !string.IsNullOrEmpty(file.OwnerEntityType))
+        if (!file.OwnerIsEmpty())
         {
             result.Tenant = new TenantIdentity(file.OwnerEntityId, file.OwnerEntityType);
         }
