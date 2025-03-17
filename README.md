@@ -95,7 +95,6 @@ mutation {
 ## Documentation
 
 * [Getting started](https://docs.virtocommerce.org/platform/developer-guide/GraphQL-Storefront-API-Reference-xAPI/File/getting-started/)
-* [REST API](https://virtostart-demo-admin.govirto.com/docs/index.html?urls.primaryName=VirtoCommerce.FileExperienceApi)
 * [GraphQL](https://docs.virtocommerce.org/platform/developer-guide/GraphQL-Storefront-API-Reference-xAPI/File/overview/)
 * [View on GitHub](https://github.com/VirtoCommerce/vc-module-file-experience-api)
 * [Experience API Documentation](https://docs.virtocommerce.org/platform/developer-guide/GraphQL-Storefront-API-Reference-xAPI/)
