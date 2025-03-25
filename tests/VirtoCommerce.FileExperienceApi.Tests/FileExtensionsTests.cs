@@ -54,6 +54,21 @@ namespace VirtoCommerce.FileExperienceApi.Tests
         }
 
         [Fact]
+        public void SetOwner_WhenExplicitOwnerId_ExpectExplicitOwner()
+        {
+            // Arrange
+            const string ownerId = "1";
+            var file = new File();
+
+            // Act
+            file.SetOwner<BaseOwner>(ownerId);
+
+            // Assert
+            Assert.Equal(ownerId, file.OwnerEntityId);
+            Assert.Equal(typeof(BaseOwner).FullName, file.OwnerEntityType);
+        }
+
+        [Fact]
         public void SetOwner_WhenOwnerIsNull_ExpectArgumentNullException()
         {
             // Arrange
@@ -99,6 +114,34 @@ namespace VirtoCommerce.FileExperienceApi.Tests
 
             // Assert
             Assert.True(expectedResult);
+        }
+
+        [Fact]
+        public void OwnerIs_WhenExplicitDerivedOwner_ExpectTrue()
+        {
+            // Arrange
+            const string ownerId = "1";
+            var file = new File { OwnerEntityId = ownerId, OwnerEntityType = typeof(BaseOwner).FullName };
+
+            // Act
+            var expectedResult = file.OwnerIs<DerivedOwner>(ownerId);
+
+            // Assert
+            Assert.True(expectedResult);
+        }
+
+        [Fact]
+        public void ClearOwner_ExpectEmptyOwner()
+        {
+            // Arrange
+            var file = new File { OwnerEntityId = "1", OwnerEntityType = typeof(BaseOwner).FullName };
+
+            // Act
+            file.ClearOwner();
+
+            // Assert
+            Assert.Null(file.OwnerEntityId);
+            Assert.Null(file.OwnerEntityType);
         }
 
         public class BaseOwner : Entity;

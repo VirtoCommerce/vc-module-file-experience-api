@@ -11,15 +11,28 @@ public static class FileExtensions
     {
         ArgumentNullException.ThrowIfNull(file);
 
-        if (owner is null ||
+        return owner != null && file.OwnerIs(owner.Id, typeof(T));
+    }
+
+    public static bool OwnerIs<T>(this File file, string ownerId)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        return file.OwnerIs(ownerId, typeof(T));
+    }
+
+    public static bool OwnerIs(this File file, string ownerId, Type ownerType)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        if (ownerType is null ||
             string.IsNullOrEmpty(file.OwnerEntityId) ||
             string.IsNullOrEmpty(file.OwnerEntityType) ||
-            !file.OwnerEntityId.EqualsIgnoreCase(owner.Id))
+            !file.OwnerEntityId.EqualsIgnoreCase(ownerId))
         {
             return false;
         }
 
-        var ownerType = typeof(T);
 
         while (ownerType != null)
         {
@@ -56,7 +69,24 @@ public static class FileExtensions
         ArgumentNullException.ThrowIfNull(file);
         ArgumentNullException.ThrowIfNull(owner);
 
-        file.OwnerEntityId = owner.Id;
-        file.OwnerEntityType = typeof(T).FullName;
+        file.SetOwner(owner.Id, typeof(T));
+    }
+
+    public static void SetOwner<T>(this File file, string ownerId)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(ownerId);
+
+        file.SetOwner(ownerId, typeof(T));
+    }
+
+    public static void SetOwner(this File file, string ownerId, Type ownerType)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(ownerId);
+        ArgumentNullException.ThrowIfNull(ownerType);
+
+        file.OwnerEntityId = ownerId;
+        file.OwnerEntityType = ownerType.FullName;
     }
 }
