@@ -131,6 +131,18 @@ namespace VirtoCommerce.FileExperienceApi.Tests
         }
 
         [Fact]
+        public void OwnerTypeIs()
+        {
+            // Arrange
+            var file = new File { OwnerEntityId = "1", OwnerEntityType = typeof(BaseOwner).FullName };
+
+            // Assert
+            Assert.True(file.OwnerTypeIs<DerivedOwner>());
+            Assert.True(file.OwnerTypeIs<BaseOwner>());
+            Assert.False(file.OwnerTypeIs<Entity>());
+        }
+
+        [Fact]
         public void ClearOwner_ExpectEmptyOwner()
         {
             // Arrange

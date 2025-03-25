@@ -25,14 +25,26 @@ public static class FileExtensions
     {
         ArgumentNullException.ThrowIfNull(file);
 
-        if (ownerType is null ||
-            string.IsNullOrEmpty(file.OwnerEntityId) ||
-            string.IsNullOrEmpty(file.OwnerEntityType) ||
-            !file.OwnerEntityId.EqualsIgnoreCase(ownerId))
+        return !string.IsNullOrEmpty(file.OwnerEntityId) &&
+            file.OwnerEntityId.EqualsIgnoreCase(ownerId) &&
+            file.OwnerTypeIs(ownerType);
+    }
+
+    public static bool OwnerTypeIs<T>(this File file)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        return file.OwnerTypeIs(typeof(T));
+    }
+
+    public static bool OwnerTypeIs(this File file, Type ownerType)
+    {
+        ArgumentNullException.ThrowIfNull(file);
+
+        if (string.IsNullOrEmpty(file.OwnerEntityType))
         {
             return false;
         }
-
 
         while (ownerType != null)
         {
