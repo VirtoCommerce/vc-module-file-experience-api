@@ -5,7 +5,7 @@ namespace VirtoCommerce.FileExperienceApi.Core.Authorization
 {
     public interface IFileAuthorizationRequirementFactory
     {
-        public string Scope { get; }
+        string Scope { get; }
         IAuthorizationRequirement Create(File file, string permission);
     }
 }

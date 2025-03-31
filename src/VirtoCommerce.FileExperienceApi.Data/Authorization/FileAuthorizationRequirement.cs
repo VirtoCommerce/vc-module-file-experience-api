@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using VirtoCommerce.FileExperienceApi.Core.Extensions;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Security.Authorization;
@@ -24,7 +25,7 @@ public class FileAuthorizationHandler : PermissionAuthorizationHandlerBase<FileA
         {
             // Authorize only if the file is not attached to any entity.
             // Attached files should be processed by a different handler.
-            authorized = string.IsNullOrEmpty(file.OwnerEntityId);
+            authorized = file.OwnerIsEmpty();
         }
 
         if (authorized)
