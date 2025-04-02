@@ -20,6 +20,10 @@
     <owner>Virto Commerce</owner>
   </owners>
 
+  <groups>
+    <group>commerce</group>
+  </groups>
+
   <projectUrl>https://github.com/VirtoCommerce/vc-module-file-experience-api</projectUrl>
   <iconUrl>Modules/$(VirtoCommerce.FileExperienceApi)/Content/logo.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
