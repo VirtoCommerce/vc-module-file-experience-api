@@ -24,7 +24,7 @@ public class FileAuthorizationService : IFileAuthorizationService
 
     public Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal user, File file, string permission)
     {
-        var requirementFactory = _requirementFactories.FirstOrDefault(x => x.Scope.EqualsInvariant(file.Scope));
+        var requirementFactory = _requirementFactories.FirstOrDefault(x => x.Scope.EqualsIgnoreCase(file.Scope));
         var requirement = requirementFactory?.Create(file, permission) ?? new FileAuthorizationRequirement(permission);
 
         return _authorizationService.AuthorizeAsync(user, file, requirement);
