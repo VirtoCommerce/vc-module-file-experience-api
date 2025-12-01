@@ -139,7 +139,7 @@ public class FileUploadService : IFileUploadService
 
     protected virtual FileUploadScopeOptions GetOptions(string scope)
     {
-        return _options.Scopes.FirstOrDefault(x => x.Scope.EqualsInvariant(scope));
+        return _options.Scopes.FirstOrDefault(x => x.Scope.EqualsIgnoreCase(scope));
     }
 
     protected virtual async Task<bool> IsExtensionAllowedAsync(string extension, IList<string> allowedExtensions)
