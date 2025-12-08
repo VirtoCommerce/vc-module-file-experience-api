@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
-using VirtoCommerce.AssetsModule.Core.Swagger;
 using VirtoCommerce.FileExperienceApi.Core.Authorization;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
@@ -18,6 +17,7 @@ using VirtoCommerce.FileExperienceApi.Web.Filters;
 using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Swagger;
 using VirtoCommerce.Platform.Data.Helpers;
 using static VirtoCommerce.Xapi.Core.ModuleConstants;
 using FilePermissions = VirtoCommerce.FileExperienceApi.Core.ModuleConstants.Security.Permissions;
@@ -45,8 +45,10 @@ public class FileUploadController : Controller
     }
 
     [HttpPost("{scope}")]
-    [UploadFile]
+    [Consumes("multipart/form-data")]
     [DisableFormValueModelBinding]
+    [DisableRequestSizeLimit]
+    [UploadFile(AllowMultiple = true, Description = "Upload file to local disk storage in uploads folder", Required = true)]
     public async Task<ActionResult<IList<FileUploadResult>>> UploadFiles([FromRoute] string scope)
     {
         var options = await _fileUploadService.GetOptionsAsync(scope);
@@ -62,12 +64,6 @@ public class FileUploadController : Controller
         {
             // Forbid() redirects to /Account/AccessDenied when there is no authorization header in the request.
             return StatusCode(StatusCodes.Status403Forbidden);
-        }
-
-        // https://learn.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-6.0
-        if (!MultipartRequestHelper.IsMultipartContentType(Request.ContentType))
-        {
-            return new[] { FileUploadError.InvalidContentType(Request.ContentType) };
         }
 
         var results = new List<FileUploadResult>();

@@ -9,6 +9,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="[8.0.11,9)" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.917.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.918.0-alpha.13171-vcst-4353" />
   </ItemGroup>
 </Project>
