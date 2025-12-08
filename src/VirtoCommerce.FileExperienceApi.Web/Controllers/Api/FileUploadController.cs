@@ -48,7 +48,7 @@ public class FileUploadController : Controller
     [Consumes("multipart/form-data")]
     [DisableFormValueModelBinding]
     [DisableRequestSizeLimit]
-    [UploadFile(AllowMultiple = true, Description = "Upload file to local disk storage in uploads folder", Required = true)]
+    [UploadFile(AllowMultiple = true, Description = "Upload one or more files to the specified scope using multipart/form-data.", Required = true)]
     public async Task<ActionResult<IList<FileUploadResult>>> UploadFiles([FromRoute] string scope)
     {
         var options = await _fileUploadService.GetOptionsAsync(scope);
