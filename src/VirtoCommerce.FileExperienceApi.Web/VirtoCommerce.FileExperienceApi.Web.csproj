@@ -8,6 +8,11 @@
     <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
   <ItemGroup>
+    <Content Update="Localizations\**">
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\VirtoCommerce.FileExperienceApi.Core\VirtoCommerce.FileExperienceApi.Core.csproj" />
     <ProjectReference Include="..\VirtoCommerce.FileExperienceApi.Data\VirtoCommerce.FileExperienceApi.Data.csproj" />
   </ItemGroup>

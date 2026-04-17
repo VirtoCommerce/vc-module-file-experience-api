@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -14,7 +12,6 @@ using VirtoCommerce.FileExperienceApi.Core.Authorization;
 using VirtoCommerce.FileExperienceApi.Core.Models;
 using VirtoCommerce.FileExperienceApi.Core.Services;
 using VirtoCommerce.FileExperienceApi.Web.Filters;
-using VirtoCommerce.Platform.Core;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Swagger;
@@ -29,17 +26,14 @@ namespace VirtoCommerce.FileExperienceApi.Web.Controllers.Api;
 [Route("api/files")]
 public class FileUploadController : Controller
 {
-    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IFileUploadService _fileUploadService;
     private readonly IFileAuthorizationService _fileAuthorizationService;
     private static readonly FormOptions _defaultFormOptions = new();
 
     public FileUploadController(
-        SignInManager<ApplicationUser> signInManager,
         IFileUploadService fileUploadService,
         IFileAuthorizationService fileAuthorizationService)
     {
-        _signInManager = signInManager;
         _fileUploadService = fileUploadService;
         _fileAuthorizationService = fileAuthorizationService;
     }
@@ -58,7 +52,7 @@ public class FileUploadController : Controller
             return new[] { FileUploadError.InvalidScope(scope) };
         }
 
-        var userId = GetUserId(await GetCurrentUser());
+        var userId = User.GetUserId() ?? AnonymousUser.UserName;
 
         if (!options.AllowAnonymousUpload && userId == AnonymousUser.UserName)
         {
@@ -127,19 +121,13 @@ public class FileUploadController : Controller
     [HttpGet("{id}")]
     public async Task<ActionResult> DownloadFile([FromRoute] string id)
     {
-        var user = await GetCurrentUser();
-        if (user is null)
-        {
-            return Forbid();
-        }
-
         var file = await _fileUploadService.GetNoCloneAsync(id);
         if (file is null)
         {
             return NotFound();
         }
 
-        var authorizationResult = await _fileAuthorizationService.AuthorizeAsync(user, file, FilePermissions.Read);
+        var authorizationResult = await _fileAuthorizationService.AuthorizeAsync(User, file, FilePermissions.Read);
         if (!authorizationResult.Succeeded)
         {
             return Forbid();
@@ -159,35 +147,5 @@ public class FileUploadController : Controller
         return stream is null
             ? NotFound()
             : File(stream, file.ContentType, file.Name);
-    }
-
-
-
-    private async Task<ClaimsPrincipal> GetCurrentUser()
-    {
-        var principal = User;
-
-        // Temporary workaround for requests from the storefront. Delete after getting rid of the storefront.
-        if (Request.Headers.TryGetValue("VirtoCommerce-User-Name", out var userNameFromHeader) &&
-            principal.IsInRole(PlatformConstants.Security.SystemRoles.Administrator))
-        {
-            principal = null;
-
-            if (userNameFromHeader != AnonymousUser.UserName)
-            {
-                var user = await _signInManager.UserManager.FindByNameAsync(userNameFromHeader);
-                if (user != null)
-                {
-                    principal = await _signInManager.CreateUserPrincipalAsync(user);
-                }
-            }
-        }
-
-        return principal;
-    }
-
-    private static string GetUserId(ClaimsPrincipal user)
-    {
-        return user?.GetUserId() ?? AnonymousUser.UserName;
     }
 }
