@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="File Experience API">
+  <title>File Experience API</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#5FC8F5"/>
+      <stop offset="100%" stop-color="#265FC6"/>
+    </linearGradient>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0B3F66" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <g transform="translate(64,64)" filter="url(#lift)">
+    <!-- File -->
+    <path d="M-38,-44 a6,6 0 0 1 6,-6 H20 L34,-36 V40 a6,6 0 0 1 -6,6 H-32 a6,6 0 0 1 -6,-6 Z" fill="#ffffff"/>
+    <polygon points="20,-50 20,-36 34,-36" fill="#D9DEE8"/>
+    <rect x="-30" y="-40" width="50" height="12" rx="3" fill="#5FC8F5"/>
+    <line x1="-30" y1="-18" x2="20" y2="-18" stroke="#CBD8E6" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-30" y1="-6" x2="24" y2="-6" stroke="#CBD8E6" stroke-width="4" stroke-linecap="round"/>
+    <line x1="-30" y1="6" x2="14" y2="6" stroke="#CBD8E6" stroke-width="4" stroke-linecap="round"/>
+
+    <!-- Experience API graph badge -->
+    <circle cx="25" cy="24" r="17" fill="#6A45D9"/>
+    <g stroke="#ffffff" stroke-width="2.2"><line x1="25" y1="15" x2="17" y2="31"/><line x1="25" y1="15" x2="34" y2="30"/><line x1="17" y1="31" x2="34" y2="30"/></g>
+    <circle cx="25" cy="15" r="3.4" fill="#ffffff"/>
+    <circle cx="16.5" cy="31" r="3.4" fill="#ffffff"/>
+    <circle cx="34" cy="30" r="3.4" fill="#ffffff"/>
+  </g>
+</svg>
