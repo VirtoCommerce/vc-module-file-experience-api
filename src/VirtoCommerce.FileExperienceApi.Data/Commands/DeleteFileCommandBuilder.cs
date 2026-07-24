@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using GraphQL;
 using GraphQL.Types;
@@ -21,14 +22,23 @@ public class DeleteFileCommandBuilder : CommandBuilder<DeleteFileCommand, bool, 
     private readonly IFileAuthorizationService _fileAuthorizationService;
 
     public DeleteFileCommandBuilder(
+        IAuthorizationService authorizationService,
+        IFileUploadService fileUploadService,
+        IFileAuthorizationService fileAuthorizationService)
+        : base(authorizationService)
+    {
+        _fileUploadService = fileUploadService;
+        _fileAuthorizationService = fileAuthorizationService;
+    }
+
+    [Obsolete("Use the constructor without IMediator. The mediator is resolved from context.RequestServices per request.", DiagnosticId = "VC0015", UrlFormat = "https://docs.virtocommerce.org/products/products-virto3-versions")]
+    public DeleteFileCommandBuilder(
         IMediator mediator,
         IAuthorizationService authorizationService,
         IFileUploadService fileUploadService,
         IFileAuthorizationService fileAuthorizationService)
-        : base(mediator, authorizationService)
+        : this(authorizationService, fileUploadService, fileAuthorizationService)
     {
-        _fileUploadService = fileUploadService;
-        _fileAuthorizationService = fileAuthorizationService;
     }
 
     protected override async Task BeforeMediatorSend(IResolveFieldContext<object> context, DeleteFileCommand request)
