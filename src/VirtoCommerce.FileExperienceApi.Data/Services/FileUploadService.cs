@@ -82,6 +82,12 @@ public class FileUploadService : IFileUploadService
             blobInfo.Size = targetStream.Position;
         }
 
+        if (options.MinFileSize > 0 && blobInfo.Size < options.MinFileSize)
+        {
+            await _blobProvider.RemoveAsync([blobInfo.RelativeUrl]);
+            return FileUploadError.InvalidMinSize(options.MinFileSize, request.FileName);
+        }
+
         if (blobInfo.Size > options.MaxFileSize)
         {
             await _blobProvider.RemoveAsync([blobInfo.RelativeUrl]);
