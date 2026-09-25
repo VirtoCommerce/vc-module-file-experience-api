@@ -11,6 +11,8 @@ namespace VirtoCommerce.FileExperienceApi.Core.Models
         [Required]
         public long MaxFileSize { get; set; }
 
+        public long MinFileSize { get; set; }
+
         [Required]
         public IList<string> AllowedExtensions { get; set; } = new List<string>();
 
