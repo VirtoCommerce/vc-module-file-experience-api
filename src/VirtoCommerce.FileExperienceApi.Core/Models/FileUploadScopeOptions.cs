@@ -11,9 +11,6 @@ namespace VirtoCommerce.FileExperienceApi.Core.Models
         [Required]
         public long MaxFileSize { get; set; }
 
-        /// <summary>
-        /// Minimum allowed file size in bytes. Zero (default) disables the check.
-        /// </summary>
         public long MinFileSize { get; set; }
 
         [Required]
