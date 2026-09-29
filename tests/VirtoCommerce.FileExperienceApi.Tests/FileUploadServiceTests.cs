@@ -14,17 +14,18 @@ namespace VirtoCommerce.FileExperienceApi.Tests
 {
     public class FileUploadServiceTests
     {
-        private const string Scope = "test-scope";
-        private const string FileName = "document.pdf";
+        private const string _scope = "test-scope";
+        private const string _fileName = "document.pdf";
 
         [Fact]
         public async Task UploadFile_WhenEmptyFileAndMinFileSizeConfigured_ExpectRejectedAndBlobRemoved()
         {
             // Arrange
             var blobProvider = new FakeBlobStorageProvider();
+
             var service = CreateService(blobProvider, new FileUploadScopeOptions
             {
-                Scope = Scope,
+                Scope = _scope,
                 MinFileSize = 1,
                 MaxFileSize = 1000,
             });
@@ -36,7 +37,7 @@ namespace VirtoCommerce.FileExperienceApi.Tests
             Assert.False(result.Succeeded);
             Assert.Equal("INVALID_MIN_SIZE", result.ErrorCode);
             Assert.Equal(1L, result.ErrorParameter);
-            Assert.Equal(FileName, result.Name);
+            Assert.Equal(_fileName, result.Name);
             Assert.Contains("1", result.ErrorMessage);
             Assert.Single(blobProvider.RemovedUrls);
             Assert.Equal(blobProvider.WrittenUrls.Single(), blobProvider.RemovedUrls.Single());
@@ -47,9 +48,10 @@ namespace VirtoCommerce.FileExperienceApi.Tests
         {
             // Arrange
             var blobProvider = new FakeBlobStorageProvider();
+
             var service = CreateService(blobProvider, new FileUploadScopeOptions
             {
-                Scope = Scope,
+                Scope = _scope,
                 MinFileSize = 1,
                 MaxFileSize = 1000,
             });
@@ -69,9 +71,10 @@ namespace VirtoCommerce.FileExperienceApi.Tests
         {
             // Arrange
             var blobProvider = new FakeBlobStorageProvider();
+
             var service = CreateService(blobProvider, new FileUploadScopeOptions
             {
-                Scope = Scope,
+                Scope = _scope,
                 MaxFileSize = 1000,
             });
 
@@ -90,9 +93,10 @@ namespace VirtoCommerce.FileExperienceApi.Tests
         {
             // Arrange
             var blobProvider = new FakeBlobStorageProvider();
+
             var service = CreateService(blobProvider, new FileUploadScopeOptions
             {
-                Scope = Scope,
+                Scope = _scope,
                 MaxFileSize = 5,
             });
 
@@ -123,17 +127,17 @@ namespace VirtoCommerce.FileExperienceApi.Tests
         {
             return new FileUploadRequest
             {
-                Scope = Scope,
+                Scope = _scope,
                 UserId = "user1",
-                FileName = FileName,
+                FileName = _fileName,
                 Stream = new MemoryStream(new byte[size]),
             };
         }
 
         private sealed class FakeBlobStorageProvider : IBlobStorageProvider
         {
-            public IList<string> WrittenUrls { get; } = new List<string>();
-            public IList<string> RemovedUrls { get; } = new List<string>();
+            public List<string> WrittenUrls { get; } = [];
+            public List<string> RemovedUrls { get; } = [];
 
             public Task<Stream> OpenWriteAsync(string blobUrl)
             {
@@ -165,18 +169,18 @@ namespace VirtoCommerce.FileExperienceApi.Tests
 
         private sealed class FakeAssetEntryService : IAssetEntryService
         {
-            public IList<AssetEntry> Saved { get; } = new List<AssetEntry>();
+            private readonly List<AssetEntry> _saved = [];
 
             public Task<IList<AssetEntry>> GetAsync(IList<string> ids, string responseGroup = null, bool clone = true)
             {
-                return Task.FromResult<IList<AssetEntry>>(Saved.Where(x => ids.Contains(x.Id)).ToList());
+                return Task.FromResult<IList<AssetEntry>>(_saved.Where(x => ids.Contains(x.Id)).ToList());
             }
 
             public Task SaveChangesAsync(IList<AssetEntry> models)
             {
                 foreach (var model in models)
                 {
-                    Saved.Add(model);
+                    _saved.Add(model);
                 }
 
                 return Task.CompletedTask;
