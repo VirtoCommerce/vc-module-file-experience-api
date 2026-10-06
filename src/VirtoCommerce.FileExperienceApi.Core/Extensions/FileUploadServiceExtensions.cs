@@ -20,7 +20,7 @@ public static class FileUploadServiceExtensions
         }
 
         var files = (await service.GetByPublicUrlAsync(urls))
-            .Where(x => x.Scope == scope)
+            .Where(x => x.Scope.EqualsIgnoreCase(scope))
             .ToList();
 
         if (files.Count == 0)
