@@ -35,4 +35,9 @@ public static class FileUploadError
     {
         return FileUploadResult.Fail("INVALID_SIZE", $"Maximum allowed file size: {maxSize}", maxSize, fileName);
     }
+
+    public static FileUploadResult InvalidMinSize(long minSize, string fileName)
+    {
+        return FileUploadResult.Fail("INVALID_MIN_SIZE", $"Minimum allowed file size: {minSize}", minSize, fileName);
+    }
 }
