@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using VirtoCommerce.FileExperienceApi.Core.Authorization;
 using VirtoCommerce.FileExperienceApi.Core.Models;
-using VirtoCommerce.Platform.Core.Common;
 
 namespace VirtoCommerce.FileExperienceApi.Data.Authorization;
 
@@ -24,7 +23,7 @@ public class FileAuthorizationService : IFileAuthorizationService
 
     public Task<AuthorizationResult> AuthorizeAsync(ClaimsPrincipal user, File file, string permission)
     {
-        var requirementFactory = _requirementFactories.FirstOrDefault(x => x.Scope.EqualsIgnoreCase(file.Scope));
+        var requirementFactory = _requirementFactories.LastOrDefault(x => x.CanCreateRequirement(file));
         var requirement = requirementFactory?.Create(file, permission) ?? new FileAuthorizationRequirement(permission);
 
         return _authorizationService.AuthorizeAsync(user, file, requirement);
